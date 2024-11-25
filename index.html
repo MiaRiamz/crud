@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Information Management</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      background-color: #f4f4f9;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 20px;
+    }
+
+    table, th, td {
+      border: 1px solid #ddd;
+    }
+
+    th, td {
+      padding: 10px;
+      text-align: left;
+    }
+
+    th {
+      background-color: #007bff;
+      color: white;
+    }
+
+    .actions button {
+      margin-right: 5px;
+      padding: 5px 10px;
+      border: none;
+      cursor: pointer;
+      border-radius: 5px;
+    }
+
+    .actions .edit {
+      background-color: #ffc107;
+    }
+
+    .actions .delete {
+      background-color: #dc3545;
+      color: white;
+    }
+
+    form {
+      margin-top: 20px;
+    }
+
+    form div {
+      margin-bottom: 10px;
+    }
+
+    form label {
+      display: block;
+      font-weight: bold;
+    }
+
+    form input {
+      width: 100%;
+      padding: 8px;
+      box-sizing: border-box;
+    }
+
+    form button {
+      padding: 10px 15px;
+      border: none;
+      background-color: #28a745;
+      color: white;
+      cursor: pointer;
+      border-radius: 5px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Student Information Management</h1>
+  <table id="studentTable">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Name</th>
+        <th>Age</th>
+        <th>Course</th>
+        <th>Year</th>
+        <th>Department</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- Rows will be dynamically added here -->
+    </tbody>
+  </table>
+
+  <form id="studentForm">
+    <h3 id="formTitle">Add New Student</h3>
+    <div>
+      <label for="name">Name</label>
+      <input type="text" id="name" required>
+    </div>
+    <div>
+      <label for="age">Age</label>
+      <input type="number" id="age" required>
+    </div>
+    <div>
+      <label for="course">Course</label>
+      <input type="text" id="course" required>
+    </div>
+    <div>
+      <label for="year">Year</label>
+      <input type="text" id="year" required>
+    </div>
+    <div>
+      <label for="department">Department</label>
+      <input type="text" id="department" required>
+    </div>
+    <button type="submit">Submit</button>
+  </form>
+
+  <script>
+    const studentTable = document.getElementById('studentTable').querySelector('tbody');
+    const studentForm = document.getElementById('studentForm');
+    const formTitle = document.getElementById('formTitle');
+
+    let students = [
+      { name: "John Doe", age: 20, course: "BSc Computer Science", year: "2nd", department: "Science" },
+      { name: "Jane Smith", age: 22, course: "BA History", year: "3rd", department: "Arts" },
+      { name: "Mike Johnson", age: 19, course: "BCom", year: "1st", department: "Commerce" }
+    ];
+
+    let editingIndex = null;
+
+    // Function to render the table
+    function renderTable() {
+      studentTable.innerHTML = "";
+      students.forEach((student, index) => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${index + 1}</td>
+          <td>${student.name}</td>
+          <td>${student.age}</td>
+          <td>${student.course}</td>
+          <td>${student.year}</td>
+          <td>${student.department}</td>
+          <td class="actions">
+            <button class="edit" onclick="editStudent(${index})">Edit</button>
+            <button class="delete" onclick="deleteStudent(${index})">Delete</button>
+          </td>
+        `;
+        studentTable.appendChild(row);
+      });
+    }
+
+    // Function to add or update student
+    function handleFormSubmit(event) {
+      event.preventDefault();
+
+      const name = document.getElementById('name').value;
+      const age = document.getElementById('age').value;
+      const course = document.getElementById('course').value;
+      const year = document.getElementById('year').value;
+      const department = document.getElementById('department').value;
+
+      const newStudent = { name, age, course, year, department };
+
+      if (editingIndex !== null) {
+        // Update existing student
+        students[editingIndex] = newStudent;
+        editingIndex = null;
+        formTitle.textContent = "Add New Student";
+      } else {
+        // Add new student
+        students.push(newStudent);
+      }
+
+      studentForm.reset();
+      renderTable();
+    }
+
+    // Function to edit student
+    function editStudent(index) {
+      const student = students[index];
+      document.getElementById('name').value = student.name;
+      document.getElementById('age').value = student.age;
+      document.getElementById('course').value = student.course;
+      document.getElementById('year').value = student.year;
+      document.getElementById('department').value = student.department;
+
+      editingIndex = index;
+      formTitle.textContent = "Edit Student";
+    }
+
+    // Function to delete student
+    function deleteStudent(index) {
+      students.splice(index, 1);
+      renderTable();
+    }
+
+    // Initialize table and form event
+    studentForm.addEventListener('submit', handleFormSubmit);
+    renderTable();
+  </script>
+</body>
+</html>
